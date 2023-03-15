@@ -1,0 +1,18 @@
+---
+title: "Project-3"
+author: "Noah Bean"
+date: "2023-03-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+employees <- read.csv("WA_Fn-UseC_-HR-Employee-Attrition.csv")
+
+
+employees$Attrition <- as.factor(employees$Attrition)
+```
+
