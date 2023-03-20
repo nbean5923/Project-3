@@ -22,5 +22,7 @@ employees$JobRole <- as.factor(employees$JobRole)
 employees$MaritalStatus <- as.factor(employees$MaritalStatus)
 employees$Over18 <- as.factor(employees$Over18)
 employees$OverTime <- as.factor(employees$OverTime)
+summary(employees)
+str(employees)
 ```
 

@@ -1,0 +1,13 @@
+Intermediate Deliverable #1: 
+You are asked to submit a small submission detailing your dataset, 
+your business question and your preliminary efforts to clean and explore the dataset. 
+Use this assignment for this submission.
+
+Kaggle Dataset:
+https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset
+
+Deliverable Submission:
+We have found an employee attrition dataset from IBM which informs various employee figures such as gender, education, salary figures (including hikes), performance ratings, among other things. 
+Our goal with this dataset is to create a predictive analytic model to determine cost-effectiveness in deciding whether to fire under-performing employees or to allow them to quit on their own.
+The predictive model would utilize the dataset to predict attrition as well as the timeline of attrition. The cost-effectiveness would be determined by standard IBM severance packages based on termination versus employee attrition rates.
+The dataset is already relatively clean as far as not having many ommissions. We did start by setting many of the variables as factors. We believe our categorical variables would include BusinessTravel, Department, EducationField, Gender, etc. Meanwhile we believe our numerical variables would include Age, DailyRate, DistanceFromHome, EmployeeCount, HourlyRate, etc.
