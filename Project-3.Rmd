@@ -9,6 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Libraries
+```{r}
+library(class)
+library(janitor)
+library(neuralnet)
+library(caret)
+library(kernlab)
+library(C50)
+library(randomForest)
+```
+
 ```{r}
 employees <- read.csv("WA_Fn-UseC_-HR-Employee-Attrition.csv")
 
@@ -22,7 +33,66 @@ employees$JobRole <- as.factor(employees$JobRole)
 employees$MaritalStatus <- as.factor(employees$MaritalStatus)
 employees$Over18 <- as.factor(employees$Over18)
 employees$OverTime <- as.factor(employees$OverTime)
+
+employees$EmployeeCount <- NULL
+employees$EmployeeNumber <- NULL
+employees$Over18 <- NULL
+employees$StandardHours <- NULL
+
+
 summary(employees)
-str(employees)
+#str(employees)
 ```
 
+# Normalize Numeric Variables
+```{r}
+normalize <- function(x) {
+  return ( (x - min(x)) / (max(x) - min(x)) )
+}
+#List of numeric columns
+numeric_cols <- c(1,4,6,7,9,11,12,13,15,17,18,19,21:31)
+  
+for (i in numeric_cols){
+  employees[,i] <- normalize(employees[,i])
+}
+```
+
+# Train & Test
+```{r}
+n <- nrow(employees)
+set.seed(0)
+idx <- sample(n, .5*n)
+employees.train <- employees[idx,]
+employees.test <- employees[-idx,]
+
+employees.matrix <- as.data.frame(model.matrix(~.-1, data=employees))
+employees.matrix <- clean_names(employees.matrix)
+employees.matrix$attrition_no <- NULL
+employees.train.matrix <- employees.matrix[idx,]
+employees.test.matrix <- employees.matrix[-idx,]
+```
+
+# KNN
+```{r}
+ctrl <- trainControl(method = "cv", number = 10,
+                     selectionFunction = "oneSE")
+
+grid_knn <- expand.grid(.k = seq(from=1, to=51, by=2))
+
+set.seed(0)
+employees.knn <- train(as.factor(attrition_yes) ~ ., data = employees.train.matrix, method = "knn",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid_knn)
+employees.knn
+```
+
+# Logistic Regression
+```{r}
+employees.logreg <- glm(Attrition~., data=employees.train, family="binomial")
+#Backward step selection to selection variables
+employees.logreg2 <- step(employees.logreg, direction = "backward")
+#Keep estimated probabilities, create prediction rule
+logreg.preds <- ifelse(as.numeric(predict(employees.logreg2, employees.test, type = "response")) > 0.5, 1, 0)
+logreg.probs <- as.numeric(predict(employees.logreg2, employees.test, type = "response"))
+```
