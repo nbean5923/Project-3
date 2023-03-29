@@ -99,7 +99,10 @@ logreg.probs <- as.numeric(predict(employees.logreg2, employees.test, type = "re
 
 # ANN
 ```{r}
-employees.ann <- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hidden = 3, stepmax = 1e+8)
+employees.ann <- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hidden = 1, stepmax = 1e+8)
+
+ann.probs <- predict(employees.ann, employees.test.matrix)
+ann.preds <- ifelse(ann.probs > .5, 1, 0)
 ```
 
 # SVM
