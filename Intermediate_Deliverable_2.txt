@@ -1,0 +1,6 @@
+Intermediate Deliverable #2
+
+Since the last deliverable, we have made six models: logistic regression, kNN, ANN, decision tree, random forest, and SVM. We are currently working on modularizing this data so that we can make a stacked model easier to compile/knit.
+
+We're still trying to answer the same question: which employees are most likely to leave? With the answer to this question, we can save money by not firing employees who are likely to leave. When we fire employees, we must pay them severance, but not when they quit. We can also predict employees leaving in order to aid human resource planning.
+
