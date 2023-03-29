@@ -122,4 +122,12 @@ employees.tree
 # Random Forest
 ```{r}
 
+employees.train.clean <- clean_names(employees.train)
+employees.test.clean <- clean_names(employees.test)
+
+set.seed(12345)
+rm_model <- randomForest(as.factor(employees.train.clean$attrition) ~ . -attrition, data = employees.train.clean)
+rm_pred <- predict(rm_model, employees.test.clean)
+confusionMatrix(as.factor(rm_pred), as.factor(employees.test.clean$attrition))
+
 ```
