@@ -104,6 +104,24 @@ employees.ann <- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hid
 
 # SVM
 ```{r}
+employees.classifier <- ksvm(Attrition ~ ., data = employees.train, kernel = "vanilladot")
+employees.classifier
+
+employees.prediction <- predict(employees.classifier, employees.test)
+head(employees.prediction)
+
+table(employees.prediction, employees.test$Attrition)
+
+agreement <- employees.prediction == employees.test$Attrition
+table(agreement)
+prop.table(table(agreement))
+
+employees.classifier.rbf <- ksvm(Attrition ~ .,data = employees.train,kernel = "rbfdot")
+employees.prediction.rbf <- predict(employees.classifier.rbf,employees.test)
+
+agreement.rbf <- employees.prediction.rbf == employees.test$Attrition
+table(agreement.rbf)
+prop.table(table(agreement.rbf))
 
 ```
 
