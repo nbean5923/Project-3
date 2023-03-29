@@ -99,7 +99,7 @@ logreg.probs <- as.numeric(predict(employees.logreg2, employees.test, type = "re
 
 # ANN
 ```{r}
-
+employees.ann <- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hidden = 3, stepmax = 1e+8)
 ```
 
 # SVM
@@ -109,7 +109,14 @@ logreg.probs <- as.numeric(predict(employees.logreg2, employees.test, type = "re
 
 # Decision Tree
 ```{r}
-
+grid_tree <- expand.grid(.trials = c(1,5,10,15,20),
+                         .model = "tree",
+                         .winnow = "FALSE")
+employees.tree <- train(Attrition ~ ., data = employees.train, method = "C5.0",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid_tree)
+employees.tree
 ```
 
 # Random Forest
