@@ -96,3 +96,23 @@ employees.logreg2 <- step(employees.logreg, direction = "backward")
 logreg.preds <- ifelse(as.numeric(predict(employees.logreg2, employees.test, type = "response")) > 0.5, 1, 0)
 logreg.probs <- as.numeric(predict(employees.logreg2, employees.test, type = "response"))
 ```
+
+# ANN
+```{r}
+
+```
+
+# SVM
+```{r}
+
+```
+
+# Decision Tree
+```{r}
+
+```
+
+# Random Forest
+```{r}
+
+```
