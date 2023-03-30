@@ -559,7 +559,7 @@ employees.knn</code></pre>
 ## 
 ## Kappa was used to select the optimal model using  the one SE rule.
 ## The final value used for the model was k = 3.</code></pre>
-<pre class="r"><code>#write.csv(employees.knn, file = &quot;employees.knn.csv&quot;)</code></pre>
+<pre class="r"><code>write.csv(employees.knn$results, file = &quot;employees.knn.csv&quot;)</code></pre>
 </div>
 <div id="logistic-regression" class="section level1">
 <h1>Logistic Regression</h1>
@@ -1100,7 +1100,7 @@ employees.tree &lt;- train(Attrition ~ ., data = employees.train, method = &quot
 ## Kappa was used to select the optimal model using  the one SE rule.
 ## The final values used for the model were trials = 15, model = tree and winnow
 ##  = FALSE.</code></pre>
-<pre class="r"><code>#write.csv(employees.tree, file = &quot;decision.tree.csv&quot;)</code></pre>
+<pre class="r"><code>write.csv(employees.tree$results, file = &quot;decision.tree.csv&quot;)</code></pre>
 </div>
 <div id="random-forest" class="section level1">
 <h1>Random Forest</h1>

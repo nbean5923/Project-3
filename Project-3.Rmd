@@ -85,7 +85,7 @@ employees.knn <- train(as.factor(attrition_yes) ~ ., data = employees.train.matr
            trControl = ctrl,
            tuneGrid = grid_knn)
 employees.knn
-#write.csv(employees.knn, file = "employees.knn.csv")
+write.csv(employees.knn$results, file = "employees.knn.csv")
 ```
 
 # Logistic Regression
@@ -141,7 +141,7 @@ employees.tree <- train(Attrition ~ ., data = employees.train, method = "C5.0",
            trControl = ctrl,
            tuneGrid = grid_tree)
 employees.tree
-#write.csv(employees.tree, file = "decision.tree.csv")
+write.csv(employees.tree$results, file = "decision.tree.csv")
 ```
 
 # Random Forest
