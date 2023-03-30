@@ -85,6 +85,7 @@ employees.knn <- train(as.factor(attrition_yes) ~ ., data = employees.train.matr
            trControl = ctrl,
            tuneGrid = grid_knn)
 employees.knn
+#write.csv(employees.knn, file = "employees.knn.csv")
 ```
 
 # Logistic Regression
@@ -95,6 +96,7 @@ employees.logreg2 <- step(employees.logreg, direction = "backward")
 #Keep estimated probabilities, create prediction rule
 logreg.preds <- ifelse(as.numeric(predict(employees.logreg2, employees.test, type = "response")) > 0.5, 1, 0)
 logreg.probs <- as.numeric(predict(employees.logreg2, employees.test, type = "response"))
+write.csv(logreg.preds, file = "logreg.preds.csv")
 ```
 
 # ANN
@@ -103,6 +105,7 @@ employees.ann <- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hid
 
 ann.probs <- predict(employees.ann, employees.test.matrix)
 ann.preds <- ifelse(ann.probs > .5, 1, 0)
+write.csv(ann.probs, file = "ann.preds.csv")
 ```
 
 # SVM
@@ -125,7 +128,7 @@ employees.prediction.rbf <- predict(employees.classifier.rbf,employees.test)
 agreement.rbf <- employees.prediction.rbf == employees.test$Attrition
 table(agreement.rbf)
 prop.table(table(agreement.rbf))
-
+write.csv(employees.prediction.rbf, file = "svm.preds.csv")
 ```
 
 # Decision Tree
@@ -138,6 +141,7 @@ employees.tree <- train(Attrition ~ ., data = employees.train, method = "C5.0",
            trControl = ctrl,
            tuneGrid = grid_tree)
 employees.tree
+#write.csv(employees.tree, file = "decision.tree.csv")
 ```
 
 # Random Forest
@@ -150,5 +154,6 @@ set.seed(12345)
 rm_model <- randomForest(as.factor(employees.train.clean$attrition) ~ . -attrition, data = employees.train.clean)
 rm_pred <- predict(rm_model, employees.test.clean)
 confusionMatrix(as.factor(rm_pred), as.factor(employees.test.clean$attrition))
+write.csv(rm_pred, file = "rm.preds.csv")
 
 ```

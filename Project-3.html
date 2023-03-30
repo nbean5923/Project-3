@@ -559,6 +559,7 @@ employees.knn</code></pre>
 ## 
 ## Kappa was used to select the optimal model using  the one SE rule.
 ## The final value used for the model was k = 3.</code></pre>
+<pre class="r"><code>#write.csv(employees.knn, file = &quot;employees.knn.csv&quot;)</code></pre>
 </div>
 <div id="logistic-regression" class="section level1">
 <h1>Logistic Regression</h1>
@@ -1005,7 +1006,16 @@ employees.logreg2 &lt;- step(employees.logreg, direction = &quot;backward&quot;)
 ## - OverTime                  1   442.17 498.17</code></pre>
 <pre class="r"><code>#Keep estimated probabilities, create prediction rule
 logreg.preds &lt;- ifelse(as.numeric(predict(employees.logreg2, employees.test, type = &quot;response&quot;)) &gt; 0.5, 1, 0)
-logreg.probs &lt;- as.numeric(predict(employees.logreg2, employees.test, type = &quot;response&quot;))</code></pre>
+logreg.probs &lt;- as.numeric(predict(employees.logreg2, employees.test, type = &quot;response&quot;))
+write.csv(logreg.preds, file = &quot;logreg.preds.csv&quot;)</code></pre>
+</div>
+<div id="ann" class="section level1">
+<h1>ANN</h1>
+<pre class="r"><code>employees.ann &lt;- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hidden = 1, stepmax = 1e+8)
+
+ann.probs &lt;- predict(employees.ann, employees.test.matrix)
+ann.preds &lt;- ifelse(ann.probs &gt; .5, 1, 0)
+write.csv(ann.probs, file = &quot;ann.preds.csv&quot;)</code></pre>
 </div>
 <div id="svm" class="section level1">
 <h1>SVM</h1>
@@ -1053,6 +1063,84 @@ table(agreement.rbf)</code></pre>
 <pre><code>## agreement.rbf
 ##     FALSE      TRUE 
 ## 0.1442177 0.8557823</code></pre>
+<pre class="r"><code>write.csv(employees.prediction.rbf, file = &quot;svm.preds.csv&quot;)</code></pre>
+</div>
+<div id="decision-tree" class="section level1">
+<h1>Decision Tree</h1>
+<pre class="r"><code>grid_tree &lt;- expand.grid(.trials = c(1,5,10,15,20),
+                         .model = &quot;tree&quot;,
+                         .winnow = &quot;FALSE&quot;)
+employees.tree &lt;- train(Attrition ~ ., data = employees.train, method = &quot;C5.0&quot;,
+           metric = &quot;Kappa&quot;,
+           trControl = ctrl,
+           tuneGrid = grid_tree)</code></pre>
+<pre><code>## Warning in Ops.factor(x$winnow): &#39;!&#39; not meaningful for factors</code></pre>
+<pre class="r"><code>employees.tree</code></pre>
+<pre><code>## C5.0 
+## 
+## 735 samples
+##  30 predictor
+##   2 classes: &#39;No&#39;, &#39;Yes&#39; 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 660, 661, 662, 661, 662, 662, ... 
+## Resampling results across tuning parameters:
+## 
+##   trials  Accuracy   Kappa    
+##    1      0.7850167  0.1705271
+##    5      0.8284465  0.2398219
+##   10      0.8447933  0.2535221
+##   15      0.8516971  0.2951858
+##   20      0.8584359  0.3105631
+## 
+## Tuning parameter &#39;model&#39; was held constant at a value of tree
+## Tuning
+##  parameter &#39;winnow&#39; was held constant at a value of FALSE
+## Kappa was used to select the optimal model using  the one SE rule.
+## The final values used for the model were trials = 15, model = tree and winnow
+##  = FALSE.</code></pre>
+<pre class="r"><code>#write.csv(employees.tree, file = &quot;decision.tree.csv&quot;)</code></pre>
+</div>
+<div id="random-forest" class="section level1">
+<h1>Random Forest</h1>
+<pre class="r"><code>employees.train.clean &lt;- clean_names(employees.train)
+employees.test.clean &lt;- clean_names(employees.test)
+
+set.seed(12345)
+rm_model &lt;- randomForest(as.factor(employees.train.clean$attrition) ~ . -attrition, data = employees.train.clean)</code></pre>
+<pre><code>## Warning in terms.formula(formula, data = data): &#39;varlist&#39; has changed (from
+## nvar=31) to new 32 after EncodeVars() -- should no longer happen!</code></pre>
+<pre class="r"><code>rm_pred &lt;- predict(rm_model, employees.test.clean)
+confusionMatrix(as.factor(rm_pred), as.factor(employees.test.clean$attrition))</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction  No Yes
+##        No  613  98
+##        Yes   6  18
+##                                           
+##                Accuracy : 0.8585          
+##                  95% CI : (0.8312, 0.8829)
+##     No Information Rate : 0.8422          
+##     P-Value [Acc &gt; NIR] : 0.1214          
+##                                           
+##                   Kappa : 0.2146          
+##                                           
+##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
+##                                           
+##             Sensitivity : 0.9903          
+##             Specificity : 0.1552          
+##          Pos Pred Value : 0.8622          
+##          Neg Pred Value : 0.7500          
+##              Prevalence : 0.8422          
+##          Detection Rate : 0.8340          
+##    Detection Prevalence : 0.9673          
+##       Balanced Accuracy : 0.5727          
+##                                           
+##        &#39;Positive&#39; Class : No              
+## </code></pre>
+<pre class="r"><code>write.csv(rm_pred, file = &quot;rm.preds.csv&quot;)</code></pre>
 </div>
 
 
