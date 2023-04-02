@@ -70,6 +70,7 @@ employees.matrix <- clean_names(employees.matrix)
 employees.matrix$attrition_no <- NULL
 employees.train.matrix <- employees.matrix[idx,]
 employees.test.matrix <- employees.matrix[-idx,]
+write.csv(employees.test$Attrition, file = "test.labels.csv")
 ```
 
 # KNN
@@ -85,7 +86,8 @@ employees.knn <- train(as.factor(attrition_yes) ~ ., data = employees.train.matr
            trControl = ctrl,
            tuneGrid = grid_knn)
 employees.knn
-write.csv(employees.knn$results, file = "employees.knn.csv")
+knn.preds <- predict(employees.knn, employees.test.matrix)
+write.csv(knn.preds, file = "employees.knn.csv")
 ```
 
 # Logistic Regression

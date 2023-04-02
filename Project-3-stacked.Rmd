@@ -4,3 +4,44 @@ author: "George Paul,"
 date: "2023-03-29"
 output: html_document
 ---
+
+# Combined Data Frame
+```{r}
+test.labels <- read.csv("test.labels.csv")
+ann.preds <- read.csv("ann.preds.csv")
+tree.preds <- read.csv("decision.tree.csv")
+knn.preds <- read.csv("employees.knn.csv")
+logreg.preds <- read.csv("logreg.preds.csv")
+rm.preds <- read.csv("rm.preds.csv")
+svm.preds <- read.csv("svm.preds.csv")
+
+combined.df <- data.frame(Attrition = test.labels[,2],
+                          ann = ann.preds[,2],
+                          tree = tree.preds[,2],
+                          knn = knn.preds[,2],
+                          logreg = logreg.preds[,2],
+                          rm = rm.preds[,2],
+                          svm = svm.preds[,2])
+
+combined.df$Attrition <- as.factor(combined.df$Attrition)
+combined.df$tree <- as.factor(combined.df$tree)
+combined.df$rm <- as.factor(combined.df$rm)
+combined.df$svm <- as.factor(combined.df$svm)
+```
+
+# New Train/Test
+```{r}
+n2 <- nrow(combined.df)
+set.seed(0)
+idx2 <- sample(n2, n2*.7)
+
+final.train <- combined.df[idx2,]
+final.test <- combined.df[-idx2,]
+```
+
+# Fit Final Models
+```{r}
+final.rf <- randomForest(Attrition ~ ., data = final.train)
+final.rf.preds <- predict(final.rf, final.test)
+confusionMatrix(final.rf.preds, final.test$Attrition)
+```
