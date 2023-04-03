@@ -52,6 +52,7 @@ final.test <- combined.df[-idx2,]
 
 # Fit Final Models
 ```{r}
+set.seed(1)
 final.rf <- randomForest(Attrition ~ ., data = final.train)
 final.rf.preds <- predict(final.rf, final.test)
 confusionMatrix(final.rf.preds, final.test$Attrition)
