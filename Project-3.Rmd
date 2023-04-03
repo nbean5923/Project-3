@@ -71,6 +71,7 @@ employees.matrix$attrition_no <- NULL
 employees.train.matrix <- employees.matrix[idx,]
 employees.test.matrix <- employees.matrix[-idx,]
 write.csv(employees.test$Attrition, file = "test.labels.csv")
+write.csv(employees.matrix, file = "cleaned.data.csv")
 ```
 
 # KNN

@@ -1,0 +1,19 @@
+---
+title: "Attrition Clustering"
+author: "Alec Behrendt"
+date: "4/3/2023"
+output: html_document
+---
+
+# Load Cleaned Data
+```{r}
+employees.matrix <- read.csv("cleaned.data.csv")
+employees.matrix$X <- NULL
+```
+
+# Create Clusters
+```{r}
+fviz_nbclust(employees.matrix, kmeans, method = "wss")
+fviz_nbclust(employees.matrix, kmeans, method = "gap_stat", iter.max=50)
+fviz_nbclust(employees.matrix, kmeans, method = "silhouette")
+```
