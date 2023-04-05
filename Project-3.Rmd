@@ -104,7 +104,7 @@ write.csv(logreg.preds, file = "logreg.preds.csv")
 
 # ANN
 ```{r}
-employees.ann <- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hidden = 1, stepmax = 1e+8)
+employees.ann <- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hidden = 3, stepmax = 1e+8)
 
 ann.probs <- predict(employees.ann, employees.test.matrix)
 ann.preds <- ifelse(ann.probs > .5, 1, 0)
@@ -113,6 +113,21 @@ write.csv(ann.probs, file = "ann.preds.csv")
 
 # SVM
 ```{r}
+kernel_list <- c("rbfdot", "polydot", "vanilladot", "tanhdot", "laplacedot")
+svm_kappa_list <- 1:length(kernel_list)
+
+for(i in 1:length(kernel_list)){
+  temp.svm <- ksvm(as.factor(Attrition)~., data=employees.train, kernel = kernel_list[i])
+  temp.svm.preds <- predict(temp.svm, employees.test)
+  svm_kappa_list[i] <- confusionMatrix(temp.svm.preds, as.factor(employees.test$Attrition))$overall[2]
+}
+kernel_list
+svm_kappa_list
+```
+Polydot and Vanilladot have equal Kappa value, selecting simpler kernel (vanilladot)
+
+# SVM with Vanilladot Kernel
+```{r}
 employees.classifier <- ksvm(Attrition ~ ., data = employees.train, kernel = "vanilladot")
 employees.classifier
 
@@ -120,18 +135,7 @@ employees.prediction <- predict(employees.classifier, employees.test)
 head(employees.prediction)
 
 table(employees.prediction, employees.test$Attrition)
-
-agreement <- employees.prediction == employees.test$Attrition
-table(agreement)
-prop.table(table(agreement))
-
-employees.classifier.rbf <- ksvm(Attrition ~ .,data = employees.train,kernel = "rbfdot")
-employees.prediction.rbf <- predict(employees.classifier.rbf,employees.test)
-
-agreement.rbf <- employees.prediction.rbf == employees.test$Attrition
-table(agreement.rbf)
-prop.table(table(agreement.rbf))
-write.csv(employees.prediction.rbf, file = "svm.preds.csv")
+write.csv(employees.prediction, file = "svm.preds.csv")
 ```
 
 # Decision Tree
