@@ -51,9 +51,24 @@ final.test <- combined.df[-idx2,]
 ```
 
 # Fit Final Models
+
+## Random Forest
 ```{r}
 set.seed(1)
 final.rf <- randomForest(Attrition ~ ., data = final.train)
 final.rf.preds <- predict(final.rf, final.test)
 confusionMatrix(final.rf.preds, final.test$Attrition)
+```
+
+## Boosted Decision Tree
+```{r}
+grid_tree <- expand.grid(.trials = c(1,5,10),
+                         .model = "tree",
+                         .winnow = "FALSE")
+final.tree <- train(Attrition ~ ., data = final.train, method = "C5.0",
+           metric = "Kappa",
+           trControl = ctrl,
+           tuneGrid = grid_tree)
+final.tree
+#final.tree.preds <- predict(final.tree, final.test$Attrition)
 ```

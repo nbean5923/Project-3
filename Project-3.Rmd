@@ -99,7 +99,7 @@ employees.logreg2 <- step(employees.logreg, direction = "backward")
 #Keep estimated probabilities, create prediction rule
 logreg.preds <- ifelse(as.numeric(predict(employees.logreg2, employees.test, type = "response")) > 0.5, 1, 0)
 logreg.probs <- as.numeric(predict(employees.logreg2, employees.test, type = "response"))
-write.csv(logreg.preds, file = "logreg.preds.csv")
+write.csv(logreg.probs, file = "logreg.preds.csv")
 ```
 
 # ANN
@@ -148,7 +148,8 @@ employees.tree <- train(Attrition ~ ., data = employees.train, method = "C5.0",
            trControl = ctrl,
            tuneGrid = grid_tree)
 employees.tree
-write.csv(employees.tree$results, file = "decision.tree.csv")
+tree.preds <- predict(employees.tree, employees.test)
+write.csv(tree.preds, file = "decision.tree.csv")
 ```
 
 # Random Forest
