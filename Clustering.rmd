@@ -5,15 +5,35 @@ date: "4/3/2023"
 output: html_document
 ---
 
+# Libraries
+```{r}
+library(class)
+library(janitor)
+library(neuralnet)
+library(caret)
+library(kernlab)
+library(C50)
+library(randomForest)
+library(factoextra)
+```
+
 # Load Cleaned Data
 ```{r}
 employees.matrix <- read.csv("cleaned.data.csv")
 employees.matrix$X <- NULL
 ```
 
-# Create Clusters
+# Create Clustering Measurements
 ```{r}
-fviz_nbclust(employees.matrix, kmeans, method = "wss")
-fviz_nbclust(employees.matrix, kmeans, method = "gap_stat", iter.max=50)
-fviz_nbclust(employees.matrix, kmeans, method = "silhouette")
+fviz_nbclust(employees.matrix[,-2], kmeans, method = "wss")
+fviz_nbclust(employees.matrix[,-2], kmeans, method = "gap_stat", iter.max=50)
+fviz_nbclust(employees.matrix[,-2], kmeans, method = "silhouette")
+```
+
+# Create Final Clusters
+```{r}
+employees.clusters <- kmeans(employees.matrix[,-2], 3)
+employees.matrix$clusters <- employees.clusters$cluster
+aggregate(data = employees.matrix, attrition_yes ~ clusters, mean)
+
 ```
