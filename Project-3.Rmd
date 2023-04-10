@@ -88,6 +88,7 @@ employees.knn <- train(as.factor(attrition_yes) ~ ., data = employees.train.matr
            tuneGrid = grid_knn)
 employees.knn
 knn.preds <- predict(employees.knn, employees.test.matrix)
+knn.kappa <- confusionMatrix(knn.preds, as.factor(employees.test.matrix$attrition_yes))$overall[2]
 write.csv(knn.preds, file = "employees.knn.csv")
 ```
 
@@ -97,17 +98,19 @@ employees.logreg <- glm(Attrition~., data=employees.train, family="binomial")
 #Backward step selection to selection variables
 employees.logreg2 <- step(employees.logreg, direction = "backward")
 #Keep estimated probabilities, create prediction rule
-logreg.preds <- ifelse(as.numeric(predict(employees.logreg2, employees.test, type = "response")) > 0.5, 1, 0)
+logreg.preds <- ifelse(as.numeric(predict(employees.logreg2, employees.test, type = "response")) > 0.5, "Yes", "No")
 logreg.probs <- as.numeric(predict(employees.logreg2, employees.test, type = "response"))
+logreg.kappa <- confusionMatrix(as.factor(logreg.preds), as.factor(employees.test$Attrition))$overall[2]
 write.csv(logreg.probs, file = "logreg.preds.csv")
 ```
 
 # ANN
 ```{r}
-employees.ann <- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hidden = 3, stepmax = 1e+8)
+employees.ann <- neuralnet(attrition_yes ~ ., data = employees.train.matrix, hidden = 7, stepmax = 1e+8)
 
 ann.probs <- predict(employees.ann, employees.test.matrix)
 ann.preds <- ifelse(ann.probs > .5, 1, 0)
+ann.kappa <- confusionMatrix(as.factor(ann.preds), as.factor(employees.test.matrix$attrition_yes))$overall[2]
 write.csv(ann.probs, file = "ann.preds.csv")
 ```
 
@@ -135,6 +138,7 @@ employees.prediction <- predict(employees.classifier, employees.test)
 head(employees.prediction)
 
 table(employees.prediction, employees.test$Attrition)
+svm.kappa <- confusionMatrix(as.factor(employees.prediction), as.factor(employees.test$Attrition))$overall[2]
 write.csv(employees.prediction, file = "svm.preds.csv")
 ```
 
@@ -149,6 +153,7 @@ employees.tree <- train(Attrition ~ ., data = employees.train, method = "C5.0",
            tuneGrid = grid_tree)
 employees.tree
 tree.preds <- predict(employees.tree, employees.test)
+tree.kappa <- confusionMatrix(as.factor(tree.preds), as.factor(employees.test$Attrition))$overall[2]
 write.csv(tree.preds, file = "decision.tree.csv")
 ```
 
@@ -162,6 +167,16 @@ set.seed(12345)
 rm_model <- randomForest(as.factor(employees.train.clean$attrition) ~ . -attrition, data = employees.train.clean)
 rm_pred <- predict(rm_model, employees.test.clean)
 confusionMatrix(as.factor(rm_pred), as.factor(employees.test.clean$attrition))
+rf.kappa <- confusionMatrix(as.factor(rm_pred), as.factor(employees.test$Attrition))$overall[2]
 write.csv(rm_pred, file = "rm.preds.csv")
+```
 
+# Kappa List
+```{r}
+model <- c("Logistic Regression", "KNN", "ANN", "SVM", "Decision Tree", "Random Forest")
+kappa <- c(logreg.kappa, knn.kappa, ann.kappa, svm.kappa, tree.kappa, rf.kappa)
+kappa.table <- data.frame(model, kappa)
+
+kappa.table
+write.csv(kappa.table, file = "kappa.table.csv")
 ```

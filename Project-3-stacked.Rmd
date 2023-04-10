@@ -38,6 +38,10 @@ combined.df$Attrition <- as.factor(combined.df$Attrition)
 combined.df$tree <- as.factor(combined.df$tree)
 combined.df$rm <- as.factor(combined.df$rm)
 combined.df$svm <- as.factor(combined.df$svm)
+
+combined.df <- clean_names(combined.df)
+kappa.table <- read.csv("kappa.table.csv")
+kappa.table$X <- NULL
 ```
 
 # New Train/Test
@@ -55,9 +59,10 @@ final.test <- combined.df[-idx2,]
 ## Random Forest
 ```{r}
 set.seed(1)
-final.rf <- randomForest(Attrition ~ ., data = final.train)
+final.rf <- randomForest(attrition ~ ., data = final.train)
 final.rf.preds <- predict(final.rf, final.test)
-confusionMatrix(final.rf.preds, final.test$Attrition)
+confusionMatrix(final.rf.preds, final.test$attrition)
+final.rf.kappa <- confusionMatrix(final.rf.preds, final.test$attrition)$overall[2]
 ```
 
 ## Boosted Decision Tree
@@ -65,10 +70,22 @@ confusionMatrix(final.rf.preds, final.test$Attrition)
 grid_tree <- expand.grid(.trials = c(1,5,10),
                          .model = "tree",
                          .winnow = "FALSE")
-final.tree <- train(Attrition ~ ., data = final.train, method = "C5.0",
+final.tree <- train(attrition ~ ., data = final.train, method = "C5.0",
            metric = "Kappa",
            trControl = ctrl,
            tuneGrid = grid_tree)
 final.tree
-#final.tree.preds <- predict(final.tree, final.test$Attrition)
+final.tree.preds <- predict(final.tree, final.test)
+confusionMatrix(final.tree.preds, final.test$attrition)
+final.tree.kappa <- confusionMatrix(final.tree.preds, final.test$attrition)$overall[2]
+```
+
+# Graphs/Figures
+```{r}
+kappa.table[7,1] <- "Final RF"
+kappa.table[7,2] <- final.rf.kappa
+kappa.table[8,1] <- "Final Tree"
+kappa.table[8,2] <- final.tree.kappa
+
+barplot(kappa.table$kappa, names.arg = kappa.table$model)
 ```
