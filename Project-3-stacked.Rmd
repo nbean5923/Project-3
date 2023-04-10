@@ -96,8 +96,9 @@ kappa.table[7,2] <- final.rf.kappa
 kappa.table[8,1] <- "Final Tree"
 kappa.table[8,2] <- final.tree.kappa
 
-barplot(kappa.table$kappa, names.arg = kappa.table$model)
+barplot(kappa.table$kappa, names.arg = kappa.table$model, xlab = "model", ylab = "kappa")
 ```
 
 # Summary (WIP)
 The kappa values of our final models are not extremely high, both floating in the 0.3 to 0.4 range, which is notably similar to the kappa values of the first level model. This implies that our models are not extremely effective in predicting which employees will leave. 
+However, given that the first level models generally had low kappa values, it is possible that this dataset is not particularly telling of trends in IBM's employee attrition. Perhaps the dataset is missing an underlying reason of why employees leave, or it could also be true that we cannot find the true relationships without more data. The dataset only contained the records of 1,470 employees, which is a relatively small amount of data to attempt to model with. Perhaps with more data, a more effective model could be built to satsify IBM's business need.
