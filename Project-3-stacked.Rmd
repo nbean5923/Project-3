@@ -2,7 +2,9 @@
 title: "Project-3-stacked"
 author: "George Paul,"
 date: "2023-03-29"
-output: html_document
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
 ---
 
 # Libraries
