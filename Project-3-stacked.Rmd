@@ -2,7 +2,9 @@
 title: "Project-3-stacked"
 author: "George Paul,"
 date: "2023-03-29"
-output: html_document
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
 ---
 
 # Problem Statement
@@ -71,6 +73,9 @@ final.rf.kappa <- confusionMatrix(final.rf.preds, final.test$attrition)$overall[
 
 ## Boosted Decision Tree
 ```{r}
+ctrl <- trainControl(method = "cv", number = 10,
+                     selectionFunction = "oneSE")
+
 grid_tree <- expand.grid(.trials = c(1,5,10),
                          .model = "tree",
                          .winnow = "FALSE")
