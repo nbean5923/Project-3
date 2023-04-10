@@ -69,6 +69,9 @@ final.rf.kappa <- confusionMatrix(final.rf.preds, final.test$attrition)$overall[
 
 ## Boosted Decision Tree
 ```{r}
+ctrl <- trainControl(method = "cv", number = 10,
+                     selectionFunction = "oneSE")
+
 grid_tree <- expand.grid(.trials = c(1,5,10),
                          .model = "tree",
                          .winnow = "FALSE")
