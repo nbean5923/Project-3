@@ -2,8 +2,13 @@
 title: "Project-3-stacked"
 author: "George Paul,"
 date: "2023-03-29"
-output: html_document
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
 ---
+
+# Problem Statement
+We are assuming the role of a consulting firm, hired by the company IBM to analyze their attrition data. IBM executives would like to be able to predict which employees will choose to leave the company, ideally for two reasons: retaining high-performing employees, and letting low-performing employees quit rather than offering a severance package. Our task is to build this model, and IBM has provided us with data on employees, both employees that have left the company and employees that have not left. We are given information on employees' personal lives, such as age, gender, relationship status, as well as information about their job satisfaction. As for job satisfaction, we have information on pay, raises, as well as survey responses about feelings about job involvement and job/environment satisfaction. We will proceed by fitting several models and predicting onto a test set, and using these outputs as predictors for our final stacked models. Our success will be measured by analyzing the kappa value, to see if we truly can predict which employees will stay or leave.
 
 # Libraries
 ```{r}
@@ -17,6 +22,7 @@ library(randomForest)
 ```
 
 # Combined Data Frame
+Below we read in several csv files, which are the outputs of our first-levels fitted models. We will combine these predictions together to make our final data frame, and these predictions will now be used as input variables to make our final models.
 ```{r}
 test.labels <- read.csv("test.labels.csv")
 ann.preds <- read.csv("ann.preds.csv")
@@ -67,6 +73,9 @@ final.rf.kappa <- confusionMatrix(final.rf.preds, final.test$attrition)$overall[
 
 ## Boosted Decision Tree
 ```{r}
+ctrl <- trainControl(method = "cv", number = 10,
+                     selectionFunction = "oneSE")
+
 grid_tree <- expand.grid(.trials = c(1,5,10),
                          .model = "tree",
                          .winnow = "FALSE")
@@ -89,3 +98,6 @@ kappa.table[8,2] <- final.tree.kappa
 
 barplot(kappa.table$kappa, names.arg = kappa.table$model)
 ```
+
+# Summary (WIP)
+The kappa values of our final models are not extremely high, both floating in the 0.3 to 0.4 range, which is notably similar to the kappa values of the first level model. This implies that our models are not extremely effective in predicting which employees will leave. 
