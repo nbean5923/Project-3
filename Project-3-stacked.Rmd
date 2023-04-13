@@ -104,6 +104,27 @@ The kappa values of our final models are not extremely high, both floating in th
 However, given that the first level models generally had low kappa values, it is possible that this dataset is not particularly telling of trends in IBM's employee attrition. Perhaps the dataset is missing an underlying reason of why employees leave, or it could also be true that we cannot find the true relationships without more data. The dataset only contained the records of 1,470 employees, which is a relatively small amount of data to attempt to model with. Perhaps with more data, a more effective model could be built to satsify IBM's business need.
 
 ## Identification of Significant Predictors (TODO)
+By looking at models that include some sort of variable importance, we can determine which variables are the most predictive for employee attrition. The first level models we ran that will best showcase the significant variables are logistic regression and random forest. For logistic regression, we will look at the p-values of variables (after backward step selection). For the random forest, we will look at the variable importance plot.
+The logistic regression summary:
+```{r, echo=F}
+summary(readRDS("logreg.rds"))
+```
+And now the random forest variable importance plot:
+```{r, echo=F}
+varImpPlot(readRDS("rf.rds"))
+```
+The following variables seem to be significant in both models:
+* Job Role (Specifically sales roles) (+)
+* Distance From Home (+)
+* Total Working Years (-)
+* Age (-)
+* Years at Company (-)
+* Overtime Work (+)
+* Job Involvement (-)
+* Other less significant variables
+
+Based on this information, we can start to create a narrative of the typical employee that chooses to leave the company. This employee more likely works in the sales department as a representative. This employee is younger, hasn't been in the workforce as long, and is new to the company. This employee is dissatisfied with his or her job involvement and commute into work, and perhaps they are asked to perform overtime work.
+Notably, some of these predictors are intuitively correlated. Naturally, a younger employee has worked for fewer years and is newer to the company. Perhaps the sales department is generally younger, and maybe newer employees are required to work overtime. However, it is logical that a young newcomer to the company is less settled into their role, and perhaps this is why they may want to leave the company.
 
 ## Clustering Results
 We ran the clustering algorithms in the dataset, and we found the optimal number of clusters was 3. We then created a final cluster assignment using k-means clustering with k = 3. Below shows the average attrition rate by cluster:

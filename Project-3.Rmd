@@ -102,6 +102,7 @@ logreg.preds <- ifelse(as.numeric(predict(employees.logreg2, employees.test, typ
 logreg.probs <- as.numeric(predict(employees.logreg2, employees.test, type = "response"))
 logreg.kappa <- confusionMatrix(as.factor(logreg.preds), as.factor(employees.test$Attrition))$overall[2]
 write.csv(logreg.probs, file = "logreg.preds.csv")
+saveRDS(employees.logreg2, file = "logreg.rds")
 ```
 
 # ANN
@@ -169,6 +170,7 @@ rm_pred <- predict(rm_model, employees.test.clean)
 confusionMatrix(as.factor(rm_pred), as.factor(employees.test.clean$attrition))
 rf.kappa <- confusionMatrix(as.factor(rm_pred), as.factor(employees.test$Attrition))$overall[2]
 write.csv(rm_pred, file = "rm.preds.csv")
+saveRDS(rm_model, file = "rf.rds")
 ```
 
 # Kappa List
