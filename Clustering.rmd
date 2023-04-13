@@ -34,6 +34,8 @@ fviz_nbclust(employees.matrix[,-2], kmeans, method = "silhouette")
 ```{r}
 employees.clusters <- kmeans(employees.matrix[,-2], 3)
 employees.matrix$clusters <- employees.clusters$cluster
-aggregate(data = employees.matrix, attrition_yes ~ clusters, mean)
+cluster_attrition <- aggregate(data = employees.matrix, attrition_yes ~ clusters, mean)
+write.csv(cluster_attrition, file = "cluster_attrition.csv")
+employees.clusters$centers
 
 ```

@@ -99,6 +99,27 @@ kappa.table[8,2] <- final.tree.kappa
 barplot(kappa.table$kappa, names.arg = kappa.table$model, xlab = "model", ylab = "kappa")
 ```
 
-# Summary (WIP)
+# Summary of Results
 The kappa values of our final models are not extremely high, both floating in the 0.3 to 0.4 range, which is notably similar to the kappa values of the first level model. This implies that our models are not extremely effective in predicting which employees will leave. 
 However, given that the first level models generally had low kappa values, it is possible that this dataset is not particularly telling of trends in IBM's employee attrition. Perhaps the dataset is missing an underlying reason of why employees leave, or it could also be true that we cannot find the true relationships without more data. The dataset only contained the records of 1,470 employees, which is a relatively small amount of data to attempt to model with. Perhaps with more data, a more effective model could be built to satsify IBM's business need.
+
+## Identification of Significant Predictors (TODO)
+
+## Clustering Results
+We ran the clustering algorithms in the dataset, and we found the optimal number of clusters was 3. We then created a final cluster assignment using k-means clustering with k = 3. Below shows the average attrition rate by cluster:
+```{r, echo=F}
+cluster_attrition <- read.csv("cluster_attrition.csv")
+cluster_attrition$X <- NULL
+cluster_attrition
+```
+There appears to be one cluster with significantly higher attrition rates. Based on looking at the centers of the 3 clusters, we found the following attributes to be true of the cluster with the highest attrition rate:
+* Younger
+* Fewer Years in Current Role
+* Unmarried
+* More sales representatives
+* Fewer total working years
+* Fewer Years at Company
+
+While the results of clustering seemed promise at first, we are hesitant to use clusters as a prediction rule for the following two reasons:
+* These variables are mostly correlated. Younger employees would naturally have had fewer total working years, fewer years at company, be unmarried, etc.
+* These variables are largely similar to the variables our models used to make predictions. Using these clusters wouldn't add anything to the models we already built.
