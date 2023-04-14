@@ -8,7 +8,7 @@ output:
 ---
 
 # Problem Statement
-We are assuming the role of a consulting firm, hired by the company IBM to analyze their attrition data. IBM executives would like to be able to predict which employees will choose to leave the company, ideally for two reasons: retaining high-performing employees, and letting low-performing employees quit rather than offering a severance package. Our task is to build this model, and IBM has provided us with data on employees, both employees that have left the company and employees that have not left. We are given information on employees' personal lives, such as age, gender, relationship status, as well as information about their job satisfaction. As for job satisfaction, we have information on pay, raises, as well as survey responses about feelings about job involvement and job/environment satisfaction. We will proceed by fitting several models and predicting onto a test set, and using these outputs as predictors for our final stacked models. Our success will be measured by analyzing the kappa value, to see if we truly can predict which employees will stay or leave.
+We are assuming the role of a consulting firm, hired by a company to analyze their attrition data. The company's executives would like to be able to predict which employees will choose to leave the company, ideally for two reasons: retaining high-performing employees, and letting low-performing employees quit rather than offering a severance package. Our task is to build this model, and the company has provided us with data on employees, including both employees that have left the company and employees that have not left. We are given information on employees' personal lives, such as age, gender, relationship status, as well as information about their job satisfaction. As for job satisfaction, we have information on pay, raises, as well as survey responses about feelings about job involvement and job/environment satisfaction. We will proceed by fitting several models and predicting onto a test set, and using these outputs as predictors for our final stacked models. Our success will be measured by analyzing the kappa value, to see if we truly can predict which employees will stay or leave.
 
 # Libraries
 ```{r}
@@ -158,18 +158,23 @@ We correctly predict 11 employees to leave, have 5 employees we predict to leave
 Below is the calculation of the amount of money saved by not paying severance:
 ```{r}
 # Number of employees * number of years worked * 3 weeks per year worked * monthly salary * 12 months per year / 52 weeks per year
-saved_money <- 11*5*3*4919*12/52
+saved_money_per_quitter <- 5*3*4919*12/52
+saved_money <- 11*saved_money_per_quitter
 saved_money
 ```
 
-This is a significant amount of money saved for the company, but we should also consider the opportunity cost of the employees we incorrectly predicted. This is a hard number to determine, but the breakeven cost is simple:
+This is a significant amount of money saved for the company, but we should also consider the opportunity cost of the employees we incorrectly predicted. The only added opportunity cost from this method comes from the false positives, because these are employees that should be fired that we are instead keeping and waiting for them to fire. This cost is a hard number to determine, but the breakeven cost is simple:
+
 ```{r}
-# saved_money / number of employees incorrectly guessed (36)
-breakeven <- saved_money/36
-breakeven
+#Saved money per quitter divided by probability a positive prediction is false
+saved_money_per_quitter/(5/16)
 ```
-As long as the opportunity cost is less that this amount, this method is profitable. Below is that amount as a percentage of the average monthly income:
+
+As long as the company loses less than $54,487 by keeping an undesirable employee in the hopes that they quit, this method is profitable. Below is the overall expected amount of saved money per employee that we are expecting to quit:
+
 ```{r}
-breakeven / (12*4919) * 100
+#Saved money per quitter multiplied by probability a positive prediction is true
+saved_money_per_quitter*(11/16)
 ```
-If the opportunity cost of incorrectly predicting that an employee will stay or leave is roughly 8.8 percent of their salary or less, than our method will be profitable for the company.
+
+Each time the company has an undesirable employee that they believe will quit, they will save $11,706 on average.
