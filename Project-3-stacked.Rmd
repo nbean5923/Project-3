@@ -89,7 +89,7 @@ confusionMatrix(final.tree.preds, final.test$attrition)
 final.tree.kappa <- confusionMatrix(final.tree.preds, final.test$attrition)$overall[2]
 ```
 
-# Graphs/Figures
+# Plot of Kappa Values
 ```{r}
 kappa.table[7,1] <- "Final RF"
 kappa.table[7,2] <- final.rf.kappa
@@ -101,9 +101,9 @@ barplot(kappa.table$kappa, names.arg = kappa.table$model, xlab = "model", ylab =
 
 # Summary of Results
 The kappa values of our final models are not extremely high, both floating in the 0.3 to 0.4 range, which is notably similar to the kappa values of the first level model. This implies that our models are not extremely effective in predicting which employees will leave. 
-However, given that the first level models generally had low kappa values, it is possible that this dataset is not particularly telling of trends in IBM's employee attrition. Perhaps the dataset is missing an underlying reason of why employees leave, or it could also be true that we cannot find the true relationships without more data. The dataset only contained the records of 1,470 employees, which is a relatively small amount of data to attempt to model with. Perhaps with more data, a more effective model could be built to satsify IBM's business need.
+However, given that the first level models generally had low kappa values, it is possible that this dataset is not particularly telling of trends in the company's employee attrition. Perhaps the dataset is missing an underlying reason of why employees leave, or it could also be true that we cannot find the true relationships without more data. The dataset only contained the records of 1,470 employees, which is a relatively small amount of data to attempt to model with. Perhaps with more data, a more effective model could be built to satsify IBM's business need.
 
-## Identification of Significant Predictors (TODO)
+## Identification of Significant Predictors 
 By looking at models that include some sort of variable importance, we can determine which variables are the most predictive for employee attrition. The first level models we ran that will best showcase the significant variables are logistic regression and random forest. For logistic regression, we will look at the p-values of variables (after backward step selection). For the random forest, we will look at the variable importance plot.
 The logistic regression summary:
 ```{r, echo=F}
@@ -114,6 +114,7 @@ And now the random forest variable importance plot:
 varImpPlot(readRDS("rf.rds"))
 ```
 The following variables seem to be significant in both models:
+
 * Job Role (Specifically sales roles) (+)
 * Distance From Home (+)
 * Total Working Years (-)
@@ -134,6 +135,7 @@ cluster_attrition$X <- NULL
 cluster_attrition
 ```
 There appears to be one cluster with significantly higher attrition rates. Based on looking at the centers of the 3 clusters, we found the following attributes to be true of the cluster with the highest attrition rate:
+
 * Younger
 * Fewer Years in Current Role
 * Unmarried
@@ -142,6 +144,7 @@ There appears to be one cluster with significantly higher attrition rates. Based
 * Fewer Years at Company
 
 While the results of clustering seemed promise at first, we are hesitant to use clusters as a prediction rule for the following two reasons:
+
 * These variables are mostly correlated. Younger employees would naturally have had fewer total working years, fewer years at company, be unmarried, etc.
 * These variables are largely similar to the variables our models used to make predictions. Using these clusters wouldn't add anything to the models we already built.
 
@@ -150,31 +153,34 @@ Once again, here is the final confusion matrix:
 ```{r, echo=F}
 confusionMatrix(final.tree.preds, final.test$attrition)
 ```
-We correctly predict 11 employees to leave, have 5 employees we predict to leave that do not, and we have 25 employees that leave which we did not predict to leave. In other words, 11 of the 16 employees we predict to leave actually leave, but we only predict 11 of the 36 employees that actually leave. We are facing a high false negative rate, and we should address the impact. Below are some facts/assumptions we will use:
+We correctly predict 11 employees to leave, have 5 employees we predict to leave that do not, and we have 25 employees that leave which we did not predict to leave. In other words, 11 of the 16 employees we predict to leave actually leave, but we only predict 11 of the 36 employees that actually leave. We are facing some errors in our modeling, and we should address if this prevents our modeling from creating profit for the company. Below are some facts/assumptions we will use:
+
 * A typical severance package is 2-4 weeks per year worked, we will assume 3
 * We will use the average salary and the average number of years at the company
 * Median monthly salary at the company is 4919 and median number of years is 5
 * We will assume that the true positives are employees that we would have fired anyway.
 Below is the calculation of the amount of money saved by not paying severance:
 ```{r}
-# Number of employees * number of years worked * 3 weeks per year worked * monthly salary * 12 months per year / 52 weeks per year
+# Number of employees * number of years worked * 3 weeks per year worked * monthly salary 
+# * 12 months per year / 52 weeks per year
 saved_money_per_quitter <- 5*3*4919*12/52
 saved_money <- 11*saved_money_per_quitter
 saved_money
 ```
 
-This is a significant amount of money saved for the company, but we should also consider the opportunity cost of the employees we incorrectly predicted. The only added opportunity cost from this method comes from the false positives, because these are employees that should be fired that we are instead keeping and waiting for them to fire. This cost is a hard number to determine, but the breakeven cost is simple:
-
-```{r}
-#Saved money per quitter divided by probability a positive prediction is false
-saved_money_per_quitter/(5/16)
-```
-
-As long as the company loses less than $54,487 by keeping an undesirable employee in the hopes that they quit, this method is profitable. Below is the overall expected amount of saved money per employee that we are expecting to quit:
+This is a significant amount of money saved for the company, but we should also consider the opportunity cost of the employees we incorrectly predicted. We have figured that we do not need to consider the cost of false negatives, because an employee unexpectedly quitting is not a new cost associated with this method, but a cost that always exists. From our confusion matrix, we have an effective probability that an employee we predict to leave will actually leave or not. Below is the expected cash value of letting an employee leave instead of firing them based on savings on severance
 
 ```{r}
 #Saved money per quitter multiplied by probability a positive prediction is true
-saved_money_per_quitter*(11/16)
+expected_value <- saved_money_per_quitter*(11/16)
+expected_value
+```
+Each time we predict an undesired employee to leave, we can expect to save $11,706. However, we need to consider the opportunity cost of allowing an undesired employee to stay when we normally would have fired them. This is a difficult amount to predict, but we can easily calculate the breakeven cost:
+
+```{r}
+# Breakeven cost * Probability of false positive = Expected value of positive prediction
+# Breakeven cost = Expected value of positve prediction / probability of false positive
+expected_value / (5/16)
 ```
 
-Each time the company has an undesirable employee that they believe will quit, they will save $11,706 on average.
+As long as the company is losing less than $37,460 on each undesirable employee that they are choosing not to fire, this method is profitable. Although we do not have an estimate for the cost of keeping an undesirable employee, we can say with some confidence that an individual employee is not causing such a large amount in losses for the company, so we can conclude that our modeling is a profitable process for the company.
