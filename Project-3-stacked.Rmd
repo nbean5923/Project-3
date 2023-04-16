@@ -1,6 +1,6 @@
 ---
 title: "Project-3-stacked"
-author: "George Paul,"
+author: "George Paul, Alec Behrendt, Noah Bean, Jeff Fong"
 date: "2023-03-29"
 output: 
   prettydoc::html_pretty:
@@ -8,7 +8,7 @@ output:
 ---
 
 # Problem Statement
-We are assuming the role of a consulting firm, hired by a company to analyze their attrition data. The company's executives would like to be able to predict which employees will choose to leave the company, ideally for two reasons: retaining high-performing employees, and letting low-performing employees quit rather than offering a severance package. Our task is to build this model, and the company has provided us with data on employees, including both employees that have left the company and employees that have not left. We are given information on employees' personal lives, such as age, gender, relationship status, as well as information about their job satisfaction. As for job satisfaction, we have information on pay, raises, as well as survey responses about feelings about job involvement and job/environment satisfaction. We will proceed by fitting several models and predicting onto a test set, and using these outputs as predictors for our final stacked models. Our success will be measured by analyzing the kappa value, to see if we truly can predict which employees will stay or leave.
+We are assuming the role of a consulting firm, hired by a company to analyze their attrition data. The company's executives would like to be able to predict which employees will choose to leave the company, ideally for two reasons: retaining high-performing employees, and letting low-performing employees quit rather than offering a severance package. Our task is to build this model, and the company has provided us with data on employees, including both employees that have left the company and employees that have not left. We are given information on employees' personal lives, such as age, gender, relationship status, as well as information about their job satisfaction. As for job satisfaction, we have information on pay, raises, as well as survey responses about feelings about job involvement and job/environment satisfaction. We will proceed by fitting several models and predicting onto a test set, and using these outputs as predictors for our final stacked models. Our success will be measured by analyzing the kappa value, to see if we truly can predict which employees will stay or leave, and also by estimating the profitability of this practice.
 
 # Libraries
 ```{r}
